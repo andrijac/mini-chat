@@ -18,8 +18,11 @@
 		});
 
 		function sendCommand() {
-			var response = h.requestGet(server);
-			console.log(response);
+			var response = h.requestGet(server, { method: "methodName", data: "some data" }, callback);
+		}
+
+		function callback(e) {
+			console.log(e.data);
 		}
 	} (window, document));
 });

@@ -88,23 +88,53 @@
 		Backslash: 220
 	};
 
+	var requestList = {};
+
+	// http://www.impressivewebs.com/ajax-from-the-ground-up-part-1-xmlhttprequest/
 	function getAjax() {
+		var xhrObject = false;
+		// Most browsers (including IE7) use the 3 lines below
 		if (window.XMLHttpRequest) {
-			return new window.XMLHttpRequest;
-		} else {
+			xhrObject = new XMLHttpRequest();
+		}
+		// Internet Explorer 5/6 will use one of the following
+		else if (window.ActiveXObject) {
 			try {
-				return new ActiveXObject("MSXML2.XMLHTTP.3.0");
-			} catch (ex) {
-				return null;
+				xhrObject = new ActiveXObject("Msxml2.XMLHTTP");
+			} catch (err) {
+				try {
+					xhrObject = new ActiveXObject("Microsoft.XMLHTTP");
+				} catch (err) {
+					xhrObject = false;
+				}
 			}
 		}
+		return xhrObject;
 	};
 
-	function requestGet(url) {
+	function requestGet(url, data, callback) {
 		var xmlHttp = getAjax();
-		xmlHttp.open("GET", url, false);
-		xmlHttp.send(null);
-		return xmlHttp.responseText;
+		xmlHttp.onreadystatechange = requestGetCallback;
+		xmlHttp.open("POST", url, false);
+
+		var request = {
+			id: guid(),
+			data: data
+		}
+
+		requestList[request.id] = callback;
+
+		xmlHttp.send(request);
+	}
+
+	function requestGetCallback(e) {
+		if (e.readyState == 4) {
+			var response = eval(responseText);
+
+			requestList[response.id](response);
+
+			delete requestList[response.id];
+		}
 	}
 
 	function getEl(id) {
@@ -135,6 +165,18 @@
 		}
 		return false;
 	};
+
+	var guid = (function guid() {
+		function s4() {
+			return Math.floor((1 + Math.random()) * 0x10000)
+             .toString(16)
+             .substring(1);
+		};
+		return function () {
+			return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+			s4() + '-' + s4() + s4() + s4();
+		}
+	} ());
 
 	return {
 		getAjax: getAjax,
