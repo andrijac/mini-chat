@@ -53,23 +53,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="client.html" />
+    <Content Include="default.html" />
+    <Content Include="default_page.js" />
     <Content Include="DOMready.js" />
     <Content Include="helper.js" />
     <Content Include="json3.min.js" />
     <Content Include="JSON_SCHEMES.js" />
     <Content Include="js_url.js" />
-    <Content Include="script.js" />
+    <Content Include="client.js" />
+    <Content Include="todo.js" />
+    <Content Include="XMLHttpRequest.js" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatServer.ashx.cs">
       <DependentUpon>ChatServer.ashx</DependentUpon>
-    </Compile>
-    <Compile Include="server.aspx.cs">
-      <DependentUpon>server.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="server.aspx.designer.cs">
-      <DependentUpon>server.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -79,7 +76,6 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="server.aspx" />
     <Content Include="web.config" />
   </ItemGroup>
   <ItemGroup>

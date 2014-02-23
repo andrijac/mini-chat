@@ -115,7 +115,7 @@
 	function requestGet(url, data, callback) {
 		var xmlHttp = getAjax();
 		xmlHttp.onreadystatechange = requestGetCallback;
-		xmlHttp.open("POST", url, false);
+		xmlHttp.open("POST", url, true);
 
 		var request = {
 			ID: guid(),
@@ -127,13 +127,13 @@
 		requestList[request.id] = callback;
 
 		xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		xmlHttp.setRequestHeader("Connection", "close");
+		//		xmlHttp.setRequestHeader("Connection", "close");
 		xmlHttp.send("data=" + encodeURIComponent(package));
 	}
 
 	function requestGetCallback(e) {
 		if (e.readyState == 4) {
-			var response = eval(responseText);
+			var response = eval(e.responseText);
 
 			requestList[response.id](response);
 
@@ -182,11 +182,26 @@
 		}
 	} ());
 
+	function Listener(interval, listenFunction) {
+		this.ID = null;
+		this.interval = interval;
+		this.listenFunction = listenFunction;
+	}
+
+	Listener.prototype.start = function () {
+		this.ID = setInterval(this.listenFunction, this.interval);
+	};
+
+	Listener.prototype.stop = function () {
+		window.clearInterval(this.ID);
+	};
+
 	return {
+		Listener: Listener,
 		getAjax: getAjax,
 		addEventListener: addEventListener,
 		requestGet: requestGet,
 		getEl: getEl,
 		keys: keys
 	};
-})()
+})();
