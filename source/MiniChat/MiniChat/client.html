@@ -3,25 +3,51 @@
 <head>
 	<meta charset="utf-8" />
 	<title>mini-chat</title>
+	<style type="text/css">
+		#output
+		{
+			overflow: hidden;
+			background-color: White;
+			border: 1px solid #000;
+			height: inherit;
+			width: 100%;
+		}
+		#main_table
+		{
+			height: 100%;
+			width: 100%;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+		}
+	</style>
 	<script src="js_url.js"></script>
 	<script src="DOMready.js"></script>
 	<script src="helper.js"></script>
 	<script src="script.js"></script>
 </head>
 <body>
-	<table>
+	<table id="main_table">
 		<tr>
-			<td colspan="2">
+			<td style="height: 95%">
 				<div id="output">
 				</div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<input type="text" id="txtInput" />
-			</td>
-			<td>
-				<input type="button" id="btnEnter" value="&gt;" />
+				<table>
+					<tr>
+						<td style="width: 95%;">
+							<input type="text" id="txtInput" style="width: 95%;" disabled="disabled" />
+						</td>
+						<td style="width: 50px;">
+							<input type="button" id="btnEnter" value="&gt;" disabled="disabled" />
+						</td>
+					</tr>
+				</table>
 			</td>
 		</tr>
 	</table>

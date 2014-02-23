@@ -118,13 +118,17 @@
 		xmlHttp.open("POST", url, false);
 
 		var request = {
-			id: guid(),
-			data: data
+			ID: guid(),
+			Data: data
 		}
+
+		var package = JSON.stringify(request);
 
 		requestList[request.id] = callback;
 
-		xmlHttp.send(request);
+		xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		xmlHttp.setRequestHeader("Connection", "close");
+		xmlHttp.send("data=" + encodeURIComponent(package));
 	}
 
 	function requestGetCallback(e) {

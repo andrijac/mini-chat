@@ -2,13 +2,28 @@
 	(function (window, document, undefined) {
 		var listen = false;
 
+		// DOM elements
 		var output = h.getEl("output");
 		var input = h.getEl("txtInput");
+		var btnEnter = h.getEl("btnEnter");
+
+		// Configuration
 		var server = "ChatServer.ashx";
 
 		var getInput = function () {
 			return input.value;
 		};
+
+		var room = url("?room");
+
+		var username = prompt("Choose your nickname:", "");
+
+		if (!username) {
+			return;
+		}
+
+		input.disabled = false;
+		btnEnter.disabled = false;
 
 		h.addEventListener(input, "keyup", function (e) {
 			var key = e.which || e.keyCode;
@@ -17,8 +32,15 @@
 			}
 		});
 
+		// Functions
 		function sendCommand() {
-			var response = h.requestGet(server, { method: "methodName", data: "some data" }, callback);
+			var requestData = {
+				User: username,
+				Room: room,
+				Input: getInput()
+			};
+
+			h.requestGet(server, requestData, callback);
 		}
 
 		function callback(e) {
