@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Web;
-using System.Web.Script.Serialization;
-
-namespace MiniChat
+﻿namespace MiniChat
 {
+	using System.Collections.Generic;
+	using System.Web;
+	using System.Web.Script.Serialization;
+
 	/// <summary>
 	/// Summary description for ChatServer
 	/// </summary>
