@@ -55,14 +55,14 @@
     <Content Include="client.html" />
     <Content Include="default.html" />
     <Content Include="default_page.js" />
-    <Content Include="DOMready.js" />
-    <Content Include="helper.js" />
-    <Content Include="json3.min.js" />
-    <Content Include="JSON_SCHEMES.js" />
-    <Content Include="js_url.js" />
+    <Content Include="scripts\DOMready.js" />
+    <Content Include="scripts\helper.js" />
+    <Content Include="scripts\json3.min.js" />
+    <Content Include="scripts\JSON_SCHEMES.js" />
+    <Content Include="scripts\js_url.js" />
     <Content Include="client.js" />
     <Content Include="todo.js" />
-    <Content Include="XMLHttpRequest.js" />
+    <Content Include="scripts\XMLHttpRequest.js" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatServer.ashx.cs">

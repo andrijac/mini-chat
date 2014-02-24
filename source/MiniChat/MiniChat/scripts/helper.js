@@ -132,8 +132,9 @@
 	}
 
 	function requestGetCallback(e) {
-		if (e.readyState == 4) {
-			var response = eval(e.responseText);
+		var args = e.target;
+		if (args.readyState == 4) {
+			var response = JSON.parse(args.responseText);
 
 			requestList[response.id](response);
 

@@ -7,7 +7,7 @@
 		var input = h.getEl("txtInput");
 		var btnEnter = h.getEl("btnEnter");
 
-		var messageTemplate = '<div><span>{{UserName}}:</span><span id="{{ID}}">{{MessageValue}}</span></div>';
+		var messageTemplate = '<div><b style="margin-right: 3px;">{{UserName}}:</b><span id="{{ID}}">{{MessageValue}}</span></div>';
 
 		// Configuration
 		var server = "ChatServer.ashx";
@@ -56,6 +56,8 @@
 				MessageValue: getInput()
 			};
 
+			input.value = "";
+
 			h.requestGet(server, requestData, callback);
 		}
 
@@ -66,10 +68,10 @@
 
 		function addMessage(message) {
 			var names = ["UserName", "ID", "MessageValue"];
-			var result = '';
+			var result = messageTemplate;
 
 			for (var i = 0; i < names.length; i++) {
-				result += messageTemplate.replace("\/{{" + names[i] + "\/}}", message[names[i]]);
+				result = result.replace(new RegExp("{{" + names[i] + "}}", 'g'), message[names[i]]);
 			}
 
 			output.innerHTML += result;
