@@ -10,14 +10,23 @@
 		var messageTemplate = '<div><b style="margin-right: 3px;">{{UserName}}:</b><span id="{{ID}}">{{MessageValue}}</span></div>';
 
 		// Configuration
-		var server = "ChatServer.ashx";
+		var serverUrl = "ChatServer.ashx";
+		var listenerParam = "?t=1";
+		var sendMessageParam = "?t=2";
+		var lastMessage = null;
 
 		var getInput = function () {
 			return input.value;
 		};
 
 		var listener = new h.Listener(1000, function () {
-			// TODO: listen
+			var url = serverUrl + listenerParam;
+			h.requestGet(url,
+			{
+				"LastMessage": lastMessage,
+				"Room": room
+			},
+			callback);
 		});
 
 		(function Main() {
@@ -30,6 +39,8 @@
 			}
 
 			room = url("?room");
+
+			listener.start();
 
 			input.disabled = false;
 			btnEnter.disabled = false;
@@ -48,31 +59,37 @@
 
 		// Functions
 		function sendCommand() {
-			listener.stop();
-
 			var requestData = {
-				UserName: username,
-				Room: room,
-				MessageValue: getInput()
+				"UserName": username,
+				"Room": room,
+				"MessageValue": getInput()
 			};
 
 			input.value = "";
 
-			h.requestGet(server, requestData, callback);
+			var url = serverUrl + sendMessageParam;
+
+			h.requestGet(url, requestData, callback);
 		}
 
 		function callback(e) {
-			addMessage(e.Message);
-			listener.start();
+			if (e.MessageList.length == 0) {
+				return;
+			}
+
+			var message = e.MessageList[e.MessageList.length - 1];
+
+			for (var i = 0; i < e.MessageList.length; i++) {
+				addMessage(e.MessageList[i]);
+			}
+
+			if (!!message) {
+				lastMessage = message.ID;
+			}
 		}
 
 		function addMessage(message) {
-			var names = ["UserName", "ID", "MessageValue"];
-			var result = messageTemplate;
-
-			for (var i = 0; i < names.length; i++) {
-				result = result.replace(new RegExp("{{" + names[i] + "}}", 'g'), message[names[i]]);
-			}
+			var result = h.executeTemplate(message, messageTemplate);
 
 			output.innerHTML += result;
 		}

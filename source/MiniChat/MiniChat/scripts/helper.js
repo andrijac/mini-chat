@@ -118,25 +118,49 @@
 		xmlHttp.open("POST", url, true);
 
 		var request = {
-			ID: guid(),
-			Data: data
+			ID: guid()
 		}
+
+		request = deepExtend(request, data);
 
 		var package = JSON.stringify(request);
 
-		requestList[request.id] = callback;
+		requestList[request.ID] = callback;
 
 		xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 		//		xmlHttp.setRequestHeader("Connection", "close");
 		xmlHttp.send("data=" + encodeURIComponent(package));
 	}
 
+	// http://youmightnotneedjquery.com/#deep_extend
+	function deepExtend(out) {
+		out = out || {};
+
+		for (var i = 1; i < arguments.length; i++) {
+			var obj = arguments[i];
+
+			if (!obj)
+				continue;
+
+			for (var key in obj) {
+				if (obj.hasOwnProperty(key)) {
+					if (typeof obj[key] === 'object')
+						deepExtend(out[key], obj[key]);
+					else
+						out[key] = obj[key];
+				}
+			}
+		}
+
+		return out;
+	};
+
 	function requestGetCallback(e) {
 		var args = e.target;
 		if (args.readyState == 4) {
 			var response = JSON.parse(args.responseText);
 
-			requestList[response.id](response);
+			requestList[response.ID](response);
 
 			delete requestList[response.id];
 		}
@@ -183,6 +207,27 @@
 		}
 	} ());
 
+	function executeTemplate(obj, pattern) {
+		var prop, m, result = pattern, matches;
+
+		matches = pattern.match(/{{[A-Za-z]+}}/g);
+
+		if (!matches) {
+			return "";
+		}
+
+		for (var i = 0; i < matches.length; i++) {
+			m = matches[i];
+			prop = m.substr(2, m.length - 4);
+
+			if (!!obj[prop]) {
+				result = result.replace(new RegExp("{{" + prop + "}}", 'g'), obj[prop]);
+			}
+		}
+
+		return result;
+	}
+
 	function Listener(interval, listenFunction) {
 		this.ID = null;
 		this.interval = interval;
@@ -203,6 +248,7 @@
 		addEventListener: addEventListener,
 		requestGet: requestGet,
 		getEl: getEl,
-		keys: keys
+		keys: keys,
+		executeTemplate: executeTemplate
 	};
 })();
