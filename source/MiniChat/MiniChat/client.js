@@ -55,7 +55,7 @@
 			h.addEventListener(btnEnter, "click", function () {
 				sendCommand();
 			});
-		} ());
+		}());
 
 		// Functions
 		function sendCommand() {
@@ -72,6 +72,7 @@
 			h.requestGet(url, requestData, callback);
 		}
 
+		// callback from Listener
 		function callback(e) {
 			if (e.MessageList.length == 0) {
 				return;
@@ -88,10 +89,11 @@
 			}
 		}
 
+		// add message to output container
 		function addMessage(message) {
 			var result = h.executeTemplate(message, messageTemplate);
 
 			output.innerHTML += result;
 		}
-	} (window, document));
+	}(window, document));
 });

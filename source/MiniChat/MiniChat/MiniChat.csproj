@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="client.html" />
+    <Content Include="config.js" />
     <Content Include="default.html" />
     <Content Include="default_page.js" />
     <Content Include="scripts\DOMready.js" />
@@ -73,7 +74,6 @@
     <Content Include="client.js" />
     <Content Include="scripts\queue.js" />
     <Content Include="todo.js" />
-    <Content Include="scripts\XMLHttpRequest.js" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChatServer.ashx.cs">

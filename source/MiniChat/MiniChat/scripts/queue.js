@@ -12,6 +12,9 @@
 		},
 		getCollection: function () {
 			return this.collection;
+		},
+		clear: function () {
+			this.collection.length = 0;
 		}
 	}
 

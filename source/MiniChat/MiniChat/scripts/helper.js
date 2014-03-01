@@ -97,7 +97,7 @@
 		if (window.XMLHttpRequest) {
 			xhrObject = new XMLHttpRequest();
 		}
-		// Internet Explorer 5/6 will use one of the following
+			// Internet Explorer 5/6 will use one of the following
 		else if (window.ActiveXObject) {
 			try {
 				xhrObject = new ActiveXObject("Msxml2.XMLHTTP");
@@ -123,15 +123,16 @@
 
 		request = deepExtend(request, data);
 
-		var package = JSON.stringify(request);
+		var pack = JSON.stringify(request);
 
 		requestList[request.ID] = callback;
 
 		xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		//		xmlHttp.setRequestHeader("Connection", "close");
-		xmlHttp.send("data=" + encodeURIComponent(package));
+
+		xmlHttp.send("data=" + encodeURIComponent(pack));
 	}
 
+	// jQuery.extend like function
 	// http://youmightnotneedjquery.com/#deep_extend
 	function deepExtend(out) {
 		out = out || {};
@@ -170,6 +171,8 @@
 		return document.getElementById(id);
 	}
 
+	// "A cross-browser implementation of addEventListener/AttachEvent without external dependencies"
+	// https://gist.github.com/eduardocereto/955642
 	function addEventListener(obj, evt, fnc) {
 		// W3C model
 		if (obj.addEventListener) {
@@ -195,6 +198,8 @@
 		return false;
 	};
 
+	// Create GUID
+	// http://stackoverflow.com/a/105074/84852
 	var guid = (function guid() {
 		function s4() {
 			return Math.floor((1 + Math.random()) * 0x10000)
@@ -205,10 +210,11 @@
 			return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
 			s4() + '-' + s4() + s4() + s4();
 		}
-	} ());
+	}());
 
+	// It will search in pattern for all appearences of {{x}} format and lookup in 'obj' for same property names.
 	function executeTemplate(obj, pattern) {
-		var prop, m, result = pattern, matches;
+		var prop, m, i, result = pattern, matches;
 
 		matches = pattern.match(/{{[A-Za-z]+}}/g);
 
@@ -216,7 +222,7 @@
 			return "";
 		}
 
-		for (var i = 0; i < matches.length; i++) {
+		for (i = 0; i < matches.length; i++) {
 			m = matches[i];
 			prop = m.substr(2, m.length - 4);
 
@@ -228,6 +234,9 @@
 		return result;
 	}
 
+	// =======================================================================
+	// Listener ==============================================================
+	// =======================================================================
 	function Listener(interval, listenFunction) {
 		this.ID = null;
 		this.interval = interval;
@@ -241,6 +250,7 @@
 	Listener.prototype.stop = function () {
 		window.clearInterval(this.ID);
 	};
+	// =======================================================================
 
 	return {
 		Listener: Listener,
