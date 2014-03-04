@@ -54,7 +54,7 @@
 			}
 
 			// read room from query string
-			room = url("?room");
+			room = h.readQuery("?room");
 
 			// start listener
 			listener.start();
