@@ -152,29 +152,7 @@
 		}
 	}
 
-	public enum RequestType
-	{
-		Listener = 1,
-		SendMessage = 2
-	}
-
-	public interface IIdentifier
-	{
-		string ID
-		{
-			get;
-			set;
-		}
-	}
-
-	public class ListenerRequest : BaseRequest
-	{
-		public string LastMessage
-		{
-			get;
-			set;
-		}
-	}
+	#region Response objects
 
 	public class Message
 	{
@@ -222,19 +200,17 @@
 		}
 	}
 
-	public class RequestData : BaseRequest
-	{
-		public string UserName
-		{
-			get;
-			set;
-		}
+	#endregion Response objects
 
-		public string MessageValue
-		{
-			get;
-			set;
-		}
+	#region Request objects
+
+	/// <summary>
+	/// requestType object on client
+	/// </summary>
+	public enum RequestType
+	{
+		Listener = 1,
+		SendMessage = 2
 	}
 
 	public class BaseRequest : IIdentifier
@@ -251,4 +227,39 @@
 			set;
 		}
 	}
+
+	public interface IIdentifier
+	{
+		string ID
+		{
+			get;
+			set;
+		}
+	}
+
+	public class ListenerRequest : BaseRequest
+	{
+		public string LastMessage
+		{
+			get;
+			set;
+		}
+	}
+
+	public class RequestData : BaseRequest
+	{
+		public string UserName
+		{
+			get;
+			set;
+		}
+
+		public string MessageValue
+		{
+			get;
+			set;
+		}
+	}
+
+	#endregion Request objects
 }

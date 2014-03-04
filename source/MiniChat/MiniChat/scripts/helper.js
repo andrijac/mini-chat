@@ -117,11 +117,7 @@
 		xmlHttp.onreadystatechange = requestGetCallback;
 		xmlHttp.open("POST", url, true);
 
-		var request = {
-			ID: guid()
-		}
-
-		request = deepExtend(request, data);
+		request = data;
 
 		var pack = JSON.stringify(request);
 
@@ -199,18 +195,13 @@
 	};
 
 	// Create GUID
-	// http://stackoverflow.com/a/105074/84852
-	var guid = (function guid() {
-		function s4() {
-			return Math.floor((1 + Math.random()) * 0x10000)
-             .toString(16)
-             .substring(1);
-		};
-		return function () {
-			return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-			s4() + '-' + s4() + s4() + s4();
-		}
-	}());
+	// http://stackoverflow.com/a/2117523/84852
+	function guid() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+			var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+			return v.toString(16);
+		});
+	}
 
 	// It will search in pattern for all appearences of {{x}} format and lookup in 'obj' for same property names.
 	function executeTemplate(obj, pattern) {
@@ -243,17 +234,21 @@
 		this.listenFunction = listenFunction;
 	}
 
-	Listener.prototype.start = function () {
-		this.ID = setInterval(this.listenFunction, this.interval);
+	Listener.prototype = {
+		start: function () {
+			this.ID = setInterval(this.listenFunction, this.interval);
+		},
+		stop: function () {
+			window.clearInterval(this.ID);
+		}
 	};
 
-	Listener.prototype.stop = function () {
-		window.clearInterval(this.ID);
-	};
 	// =======================================================================
 
 	return {
 		Listener: Listener,
+		guid: guid,
+		deepExtend: deepExtend,
 		getAjax: getAjax,
 		addEventListener: addEventListener,
 		requestGet: requestGet,
