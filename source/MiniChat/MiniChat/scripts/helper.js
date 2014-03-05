@@ -136,7 +136,9 @@
 	}
 
 	function requestGet(url, data, callback) {
-		var xmlHttp = getAjax();
+		var xmlHttp = getAjax(),
+			request;
+
 		xmlHttp.onreadystatechange = requestGetCallback;
 		xmlHttp.open("POST", url, true);
 
