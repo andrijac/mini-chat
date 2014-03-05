@@ -69,6 +69,7 @@
     <Content Include="scripts\JSON_SCHEMES.js" />
     <Content Include="scripts\js_url.js" />
     <Content Include="client.js" />
+    <Content Include="scripts\polyfills.js" />
     <Content Include="scripts\queue.js" />
     <Content Include="todo.js" />
   </ItemGroup>
