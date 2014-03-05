@@ -28,5 +28,22 @@
         });
     }
 
+    //==========================================================================
+    //=========== FILE MERGING =================================================
+    //==========================================================================
+    (function(){
+        var filename = "C:/Users/acacanovic/Documents/STORE/GIT_ROOT/mini-chat/source/MiniChat/MiniChat/client.js";
+        //process.argv[0];
+        var readAllText = function (filename, callback) {            
+            fs.readFile(filename, 'utf8', function(err, data) {
+                if (err) throw err;
+                callback(data);
+            });            
+        };
+
+        readAllText(filename, function(e){ wl(e); });
+
+    }());
+
     rl.question("", function () { rl.close(); });
 }());
