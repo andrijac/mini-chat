@@ -57,7 +57,7 @@
                 }
 
                 result.push(line);
-                
+ 
             }
 
             return result;
@@ -77,10 +77,18 @@
             };
 
         readAllText(filename, function (filename, e) {
-           
-            var files = findBlock(e, "<!-- scripts", "end -->");
 
-            files.forEach(function(e) { log(e); });
+            var files = findBlock(e, "<!-- BEGIN dev scripts -->", "<!-- END dev scripts -->"),
+                root = path.dirname(filename);
+
+            files.forEach(function(e) { 
+                var r = new RegExp(/\"[A-Za-z\W]+\"/),
+                    qFile = r.exec(e),
+                    file = qFile[0].substring(1, qFile[0].length - 1),
+                    fullFile = root + '/' + file;
+
+                log(fullFile);
+            });
 
         });
 
