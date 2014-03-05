@@ -1,4 +1,5 @@
 ﻿DOMready(function () {
+	"use strict";
 	(function (window, document, undefined) {
 		//============================================
 		//=========== VAR ============================

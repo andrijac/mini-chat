@@ -1,4 +1,6 @@
 ﻿var h = (function () {
+	"use strict";
+
 	var keys = {
 		Backspace: 8,
 		Tab: 9,
