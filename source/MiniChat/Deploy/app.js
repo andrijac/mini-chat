@@ -18,14 +18,10 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 
-// Make sure we got a filename on the command line.
 if (process.argv.length < 3) {
-	process.argv.forEach(function (e) {
-        //blank();
+	process.argv.forEach(function (e) {        
 		wl(e);
-	});
-	//console.log('Usage: node ' + process.argv[1] + ' FILENAME');
-	//process.exit(1);
+	});	
 }
 
 rl.question("", function(){rl.close();});
