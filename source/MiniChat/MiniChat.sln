@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.30110.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniChat", "MiniChat\MiniChat.csproj", "{F17714F0-BA19-4BCA-A6CB-CE8858F9AE5A}"
 EndProject
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "Deploy", "Deploy\Deploy.njsproj", "{C07D24DE-6642-453F-A84D-FED3F9856F87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{F17714F0-BA19-4BCA-A6CB-CE8858F9AE5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F17714F0-BA19-4BCA-A6CB-CE8858F9AE5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F17714F0-BA19-4BCA-A6CB-CE8858F9AE5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C07D24DE-6642-453F-A84D-FED3F9856F87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C07D24DE-6642-453F-A84D-FED3F9856F87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C07D24DE-6642-453F-A84D-FED3F9856F87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C07D24DE-6642-453F-A84D-FED3F9856F87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,0 +1,10 @@
+{
+  "name": "Deploy",
+  "version": "0.0.0",
+  "description": "Deploy",
+  "main": "app.js",
+  "author": {
+    "name": "Andrija Cacanovic",
+    "email": ""
+  }
+}
