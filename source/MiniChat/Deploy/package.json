@@ -6,5 +6,9 @@
   "author": {
     "name": "Andrija Cacanovic",
     "email": ""
+  },
+  "dependencies": {
+    "q": "~1.0.0",
+    "async": "~0.2.10"
   }
 }
