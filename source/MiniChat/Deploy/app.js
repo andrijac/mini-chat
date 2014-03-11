@@ -4,8 +4,7 @@
     "use strict";
     var readline = require('readline'),
         path = require('path'),
-        fs = require('fs'),
-        //q = require('q'),
+        fs = require('fs'),        
 
         toArray = function () { return Array.prototype.slice.call(arguments[0]); },
         log =   function () {
@@ -21,46 +20,54 @@
             input: process.stdin,
             output: process.stdout
         }),
-        emptyFunction = function() { };
+        emptyFunction = function() { },
+		argIndex = 0,
+		filename,
+		outputFileName;
 
     blank();
 
-    if (process.argv.length < 3) {
-        process.argv.forEach(function (e) {
-            wl(e);
-        });
-    }
+	function getActualFilePath(filePath) {		
+
+		var relative;
+
+		// check absolute path
+		if(fs.existsSync(filePath)) {
+			return filePath;
+		}
+
+		// check relative path
+		relative = [__dirname, filePath].join("/");
+
+		if(fs.existsSync(relative)) {
+			return relative;
+		}		
+
+		throw new Error("File " + filePath + " not found");
+	}
+
+    if (process.argv.length < 4) {	
+			
+		wl("Usage: node app.js [input html file path] [output html file path]");
+		process.exit(0);
+
+    } else {
+
+		filename = getActualFilePath(process.argv[2]);
+		outputFileName = [__dirname, process.argv[3]].join("/");
+
+	}
 
     if(!Array.prototype.insert) {
         Array.prototype.insert = function (index, item) {
             this.splice(index, 0, item);
         };
-    }
-
-    //========== TEST BEING
-
-    //var filename = "C:/Users/acacanovic/Documents/STORE/GIT_ROOT/mini-chat/source/MiniChat/MiniChat/client.html";
-
-    //var promis = q.denodeify(fs.readFile);
-
-    //promis(filename, 'utf8').then(function() {
-    //     debugger; 
-    //     toArray(arguments).forEach(log); 
-    //}, log);
-
-    //rl.question("", function () { rl.close(); });
-
-    //return;
-    //========== TEST END
-
-     
+    }     
 
     //==========================================================================
     //=========== FILE MERGING =================================================
     //==========================================================================
-    (function () {        
-
-        
+    (function () {
 
         function batch(execFunc, parameters, eachCallback, callback) {
 
@@ -165,22 +172,15 @@
             });
         }
 
-        var filename = "C:/Users/acacanovic/Documents/STORE/GIT_ROOT/mini-chat/source/MiniChat/MiniChat/client.html";
+        //var filename = "C:/Users/acacanovic/Documents/STORE/GIT_ROOT/mini-chat/source/MiniChat/MiniChat/client.html";
 
-        readAllText(filename, function (filename, e) {
+        readAllText(filename, function (filename, allText) {
 
-            var allText = e;
+            var allLines = getLines(allText),
+				blockFind = findBlock(allText, "<!-- BEGIN dev scripts -->", "<!-- END dev scripts -->"),
+				filePathList = parseFileNames(filename, blockFind.result);            
 
-            var allLines = getLines(allText);
-
-            var blockFind = findBlock(allText, "<!-- BEGIN dev scripts -->", "<!-- END dev scripts -->");
-
-            var filePathList = parseFileNames(filename, blockFind.result);            
-
-            //filePathList.forEach(function(e){log(e);});
-
-            batchRead(filePathList, function(result) {
-                log(e);
+            batchRead(filePathList, function(result) {                
 
                 var start = blockFind.startLine;
                 var sliceLength = blockFind.endLine - blockFind.startLine + 1;
@@ -196,11 +196,9 @@
                 insertTextArr.push("</script>");
                 var insertText = insertTextArr.join("");
 
-                allLines.insert(start, insertText);
-                //allLines.splice(start, 0, 'andrija');
-                //allLines.insert(start, 'andrija');
+                allLines.insert(start, insertText);                
 
-                fs.writeFile("C:/temp/test1222.htm", allLines.join(""), function(err) {
+                fs.writeFile(outputFileName, allLines.join(""), function(err) {
                     if(err) {
                         console.log(err);
                     } else {
