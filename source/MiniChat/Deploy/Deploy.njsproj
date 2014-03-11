@@ -7,7 +7,7 @@
     <RootNamespace>Deploy</RootNamespace>
     <NodeExePath />
     <NodeExeArguments />
-    <ScriptArguments>"../MiniChat/client.html" "test1222.htm"</ScriptArguments>
+    <ScriptArguments>../MiniChat/client.html ../../../deploy/client.html</ScriptArguments>
     <NodejsPort />
     <LaunchUrl />
   </PropertyGroup>
@@ -35,6 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="app.js" />
+    <Content Include="build.bat" />
     <Content Include="package.json" />
     <Content Include="README.md" />
   </ItemGroup>

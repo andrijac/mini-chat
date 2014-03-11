@@ -1,7 +1,7 @@
 ﻿/*
 
 - Libraries on CDN (json2) cdnjs
-
+- Display server errors
 
 Shared memory installation:
 http://www.php.net/manual/en/shmop.installation.php

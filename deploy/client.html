@@ -1,0 +1,654 @@
+﻿<!DOCTYPE html><html><head>	<meta charset="utf-8" />		<style type="text/css">		#output		{			overflow: hidden;			background-color: White;			border: 1px solid #000;			height: inherit;			width: 100%;		}		#main_table		{			height: 100%;			width: 100%;			position: absolute;			top: 0;			bottom: 0;			left: 0;			right: 0;		}		.messageBody {		}		.sysMessageBody {			color:gray;			font-style:italic;		}	</style>		<title>mini-chat</title>	<script>﻿/*
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim#Compatibility
+*/
+if (!String.prototype.trim) {
+	String.prototype.trim = function () {
+		return this.replace(/^\s+|\s+$/g, '');
+	};
+}
+
+/*
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/forEach#Polyfill
+*/
+if (!Array.prototype.forEach) {
+	Array.prototype.forEach = function (fun /*, thisArg */) {
+		"use strict";
+
+		if (this === void 0 || this === null)
+			throw new TypeError();
+
+		var t = Object(this);
+		var len = t.length >>> 0;
+		if (typeof fun !== "function")
+			throw new TypeError();
+
+		var thisArg = arguments.length >= 2 ? arguments[1] : void 0;
+		for (var i = 0; i < len; i++) {
+			if (i in t)
+				fun.call(thisArg, t[i], i, t);
+		}
+	};
+}﻿/*
+https://github.com/Integralist/DOMready
+*/
+
+var DOMready = (function () {
+	// Variables used throughout this script
+	var win = window,
+		doc = win.document,
+		dce = doc.createElement,
+		supportAEL = !!doc.addEventListener,
+		queue = [],
+		exec,
+		loaded,
+		fallback_onload,
+		explorerTimer,
+		readyStateTimer,
+		isIE = (function () {
+			var undef,
+				v = 3,
+				div = doc.createElement('div'),
+				all = div.getElementsByTagName('i');
+
+			while (
+				div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+				all[0]
+			);
+
+			return v > 4 ? v : undef;
+		} ());
+
+	// Private inner function which is called once DOM is loaded.
+	function process() {
+		// Let the script know the DOM is loaded
+		loaded = true;
+
+		// Cleanup
+		if (supportAEL) {
+			doc.removeEventListener("DOMContentLoaded", process, false);
+		}
+
+		// Move the zero index item from the queue and set 'exec' equal to it
+		while ((exec = queue.shift())) {
+			// Now execute the current function
+			exec();
+		}
+	}
+
+	return function (fn) {
+		// if DOM is already loaded then just execute the specified function
+		if (loaded) {
+			return fn();
+		}
+
+		if (supportAEL) {
+			// Any number of listeners can be set for when this event fires,
+			// but just know that this event only ever fires once
+			doc.addEventListener("DOMContentLoaded", process, false);
+		}
+
+		// Internet Explorer versions less than 9 don't support DOMContentLoaded.
+		// The doScroll('left') method  by Diego Perini (http://javascript.nwbox.com/IEContentLoaded/) appears to be the most reliable solution.
+		// Microsoft documentation explains the reasoning behind this http://msdn.microsoft.com/en-us/library/ms531426.aspx#Component_Initialization
+		else if (isIE < 9) {
+			explorerTimer = win.setInterval(function () {
+				if (doc.body) {
+					// Check for doScroll success
+					try {
+						dce('div').doScroll('left');
+						win.clearInterval(explorerTimer);
+					} catch (e) {
+						return;
+					}
+
+					// Process function stack
+					process();
+					return;
+				}
+			}, 10);
+
+			// Inner function to check readyState
+			function checkReadyState() {
+				if (doc.readyState == 'complete') {
+					// Clean-up
+					doc.detachEvent('onreadystatechange', checkReadyState);
+					win.clearInterval(explorerTimer);
+					win.clearInterval(readyStateTimer);
+
+					// Process function stack
+					process();
+				}
+			}
+
+			// If our page is placed inside an <iframe> by another user then the above doScroll method wont work.
+			// As a secondary fallback for Internet Explorer we'll check the readyState property.
+			// Be aware that this will fire *just* before the window.onload event so isn't ideal.
+			// Also notice that we use IE specific event model (attachEvent) to avoid being overwritten by 3rd party code.
+			doc.attachEvent('onreadystatechange', checkReadyState);
+
+			// According to @jdalton: some browsers don't fire an onreadystatechange event, but do update the document.readyState
+			// So to workaround the above snippet we'll also poll via setInterval.
+			readyStateTimer = win.setInterval(function () {
+				checkReadyState();
+			}, 10);
+		}
+
+		fallback_onload = function () {
+			// Note: calling process() now wont cause any problem for modern browsers.
+			// Because the function would have already been called when the DOM was loaded.
+			// Meaning the queue of functions have already been executed
+			process();
+
+			// Clean-up
+			if (supportAEL) {
+				doc.removeEventListener('load', fallback_onload, false);
+			} else {
+				doc.detachEvent('onload', fallback_onload);
+			}
+		};
+
+		// Using DOM1 model event handlers makes the script more secure than DOM0 event handlers.
+		// This way we don't have to worry about an already existing window.onload being overwritten as DOM1 model allows multiple handlers per event.
+		if (supportAEL) {
+			doc.addEventListener('load', fallback_onload, false);
+		} else {
+			doc.attachEvent('onload', fallback_onload);
+		}
+
+		// As the DOM hasn't loaded yet we'll store this function and execute it later
+		queue.push(fn);
+	};
+} ());﻿var h = (function () {
+	"use strict";
+
+	var keys = {
+		Backspace: 8,
+		Tab: 9,
+		Enter: 13,
+		Shift: 16,
+		Ctrl: 17,
+		Alt: 18,
+		Pause: 19,
+		Capslock: 20,
+		Esc: 27,
+		PageUp: 33,
+		PageDown: 34,
+		End: 35,
+		Home: 36,
+		LeftArrow: 37,
+		UpArrow: 38,
+		RightArrow: 39,
+		DownArrow: 40,
+		Insert: 45,
+		Delete: 46,
+		Zero: 48,
+		One: 49,
+		Two: 50,
+		Three: 51,
+		Four: 52,
+		Five: 53,
+		Six: 54,
+		Seven: 55,
+		Eight: 56,
+		Nine: 57,
+		a: 65,
+		b: 66,
+		c: 67,
+		d: 68,
+		e: 69,
+		f: 70,
+		g: 71,
+		h: 72,
+		i: 73,
+		j: 74,
+		k: 75,
+		l: 76,
+		m: 77,
+		n: 78,
+		o: 79,
+		p: 80,
+		q: 81,
+		r: 82,
+		s: 83,
+		t: 84,
+		u: 85,
+		v: 86,
+		w: 87,
+		x: 88,
+		y: 89,
+		z: 90,
+		Zero_numpad: 96,
+		One_numpad: 97,
+		Two_numpad: 98,
+		Three_numpad: 99,
+		Four_numpad: 100,
+		Five_numpad: 101,
+		Six_numpad: 102,
+		Seven_numpad: 103,
+		Eight_numpad: 104,
+		Nine_numpad: 105,
+		Star: 106,
+		Plus: 107,
+		Minus: 109,
+		Dot: 110,
+		Divide: 111,
+		F1: 112,
+		F2: 113,
+		F3: 114,
+		F4: 115,
+		F5: 116,
+		F6: 117,
+		F7: 118,
+		F8: 119,
+		F9: 120,
+		F10: 121,
+		F11: 122,
+		F12: 123,
+		Equals: 187,
+		Coma: 188,
+		Slash: 191,
+		Backslash: 220
+	};
+
+	var requestList = {};
+
+	// http://www.impressivewebs.com/ajax-from-the-ground-up-part-1-xmlhttprequest/
+	function getAjax() {
+		var xhrObject = false;
+		// Most browsers (including IE7) use the 3 lines below
+		if (window.XMLHttpRequest) {
+			xhrObject = new XMLHttpRequest();
+		}
+			// Internet Explorer 5/6 will use one of the following
+		else if (window.ActiveXObject) {
+			try {
+				xhrObject = new ActiveXObject("Msxml2.XMLHTTP");
+			} catch (err) {
+				try {
+					xhrObject = new ActiveXObject("Microsoft.XMLHTTP");
+				} catch (err) {
+					xhrObject = false;
+				}
+			}
+		}
+		return xhrObject;
+	};
+
+	// taken from @github http://github.com/websanova/js-url
+	function readQuery(arg, url) {
+		var _ls = url || window.location.toString(),
+			params = _ls, param = null, i, ii;
+
+		if (arg[0] === '?') params = (params.split('?')[1] || '').split('#')[0];
+		else if (arg[0] === '#') params = (params.split('#')[1] || '');
+
+		if (!arg[1]) return params;
+
+		arg = arg.substring(1);
+		params = params.split('&');
+
+		for (i = 0, ii = params.length; i < ii; i++) {
+			param = params[i].split('=');
+			if (param[0] === arg) return param[1];
+		}
+
+		return null;
+	}
+
+	function requestGet(url, data, callback) {
+		var xmlHttp = getAjax(),
+			request;
+
+		xmlHttp.onreadystatechange = requestGetCallback;
+		xmlHttp.open("POST", url, true);
+
+		request = data;
+
+		var pack = JSON.stringify(request);
+
+		requestList[request.ID] = callback;
+
+		xmlHttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+		xmlHttp.send("data=" + encodeURIComponent(pack));
+	}
+
+	// jQuery.extend like function
+	// http://youmightnotneedjquery.com/#deep_extend
+	function deepExtend(out) {
+		out = out || {};
+
+		for (var i = 1; i < arguments.length; i++) {
+			var obj = arguments[i];
+
+			if (!obj)
+				continue;
+
+			for (var key in obj) {
+				if (obj.hasOwnProperty(key)) {
+					if (typeof obj[key] === 'object')
+						deepExtend(out[key], obj[key]);
+					else
+						out[key] = obj[key];
+				}
+			}
+		}
+
+		return out;
+	};
+
+	function requestGetCallback(e) {
+		var args = e.target;
+		if (args.readyState == 4) {
+			var response = JSON.parse(args.responseText);
+
+			requestList[response.ID](response);
+
+			delete requestList[response.id];
+		}
+	}
+
+	function getEl(id) {
+		return document.getElementById(id);
+	}
+
+	// "A cross-browser implementation of addEventListener/AttachEvent without external dependencies"
+	// https://gist.github.com/eduardocereto/955642
+	function addEventListener(obj, evt, fnc) {
+		// W3C model
+		if (obj.addEventListener) {
+			obj.addEventListener(evt, fnc, false);
+			return true;
+		} else if (obj.attachEvent) { // Microsoft model
+			return obj.attachEvent('on' + evt, fnc);
+		} else { // Browser don't support W3C or MSFT model, go on with traditional
+			evt = 'on' + evt;
+			if (typeof obj[evt] === 'function') {
+				// Object already has a function on traditional
+				// Let's wrap it with our own function inside another function
+				fnc = (function (f1, f2) {
+					return function () {
+						f1.apply(this, arguments);
+						f2.apply(this, arguments);
+					}
+				})(obj[evt], fnc);
+			}
+			obj[evt] = fnc;
+			return true;
+		}
+		return false;
+	};
+
+	// Create GUID
+	// http://stackoverflow.com/a/2117523/84852
+	function guid() {
+		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+			var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+			return v.toString(16);
+		});
+	}
+
+	// It will search in pattern for all appearences of {{x}} format and lookup in 'obj' for same property names.
+	function executeTemplate(obj, pattern) {
+		var prop, m, i, result = pattern, matches;
+
+		matches = pattern.match(/{{[A-Za-z]+}}/g);
+
+		if (!matches) {
+			return "";
+		}
+
+		for (i = 0; i < matches.length; i++) {
+			m = matches[i];
+			prop = m.substr(2, m.length - 4);
+
+			if (!!obj[prop]) {
+				result = result.replace(new RegExp("{{" + prop + "}}", 'g'), obj[prop]);
+			}
+		}
+
+		return result;
+	}
+
+	// =======================================================================
+	// Listener ==============================================================
+	// =======================================================================
+	function Listener(interval, listenFunction) {
+		this.ID = null;
+		this.interval = interval;
+		this.listenFunction = listenFunction;
+	}
+
+	Listener.prototype = {
+		start: function () {
+			this.ID = setInterval(this.listenFunction, this.interval);
+		},
+		stop: function () {
+			window.clearInterval(this.ID);
+		}
+	};
+
+	// =======================================================================
+
+	return {
+		readQuery: readQuery,
+		Listener: Listener,
+		guid: guid,
+		deepExtend: deepExtend,
+		getAjax: getAjax,
+		addEventListener: addEventListener,
+		requestGet: requestGet,
+		getEl: getEl,
+		keys: keys,
+		executeTemplate: executeTemplate
+	};
+})();﻿DOMready(function () {
+	"use strict";
+	(function (window, document, undefined) {
+		//============================================
+		//=========== VAR ============================
+		//============================================
+
+		// State
+		var username,
+			room,
+			lastMessage = null,
+			commands,
+			listener,
+
+			// DOM elements
+			output = h.getEl("output"),
+			input = h.getEl("txtInput"),
+			btnEnter = h.getEl("btnEnter"),
+
+			// message output html template
+			messageTemplate = '<div><b style="margin-right: 3px;">{{UserName}}:</b><span id="{{ID}}" class="messageBody">{{MessageValue}}</span></div>',
+			sysMessageTemplate = '<div><span class="sysMessageBody">{{MessageValue}}</span></div>',
+
+			// Constants
+			requestType = {
+				listener: 1,
+				sendMessage: 2
+			},
+
+			// Configuration
+			serverUrl = "ChatServer.ashx";
+
+		//============================================
+
+		function Cmd(c, h) {
+			this.cmd = c;
+			this.handler = h;
+		}
+
+		commands = [
+			new Cmd("nick", nickCommand)
+		];
+
+		//function ExecInfo() {
+		//	this.url = "";
+		//	this.requestData = null;
+		//	this.callback = null;
+		//}
+
+		//============================================
+
+		(function Main() {
+			//username = prompt("Choose your nickname:", "");
+
+			username = 'user';
+
+			if (!username) {
+				return;
+			}
+
+			listener = new h.Listener(1000, listenerHandler);
+
+			// read room from query string
+			room = h.readQuery("?room");
+
+			// start listener
+			window.l = listener;
+			listener.start();
+
+			// enable controls
+			input.disabled = false;
+			btnEnter.disabled = false;
+
+			// add ENTER keyup event handler on Input field
+			h.addEventListener(input, "keyup", function (e) {
+				var key = e.which || e.keyCode;
+				if (e.which == h.keys.Enter) {
+					sendMessage();
+				}
+			});
+
+			// add Click event handler on button
+			h.addEventListener(btnEnter, "click", function () {
+				sendMessage();
+			});
+		}());
+
+		//============================================
+		//=========== FUNCTIONS ======================
+		//============================================
+
+		// Functions
+		function sendMessage() {
+			var inputVal = input.value.trim(),
+				commandFind,
+				requestData;
+
+			if (!inputVal) return;
+
+			commandFind = getCommand(inputVal)
+
+			if (commandFind) {
+				commandFind.cmd.handler(commandFind.value);
+			}
+			else {
+				requestData = {
+					"UserName": username,
+					"MessageValue": inputVal
+				};
+
+				sendRequest(requestData, requestType.sendMessage, callback);
+			}
+
+			input.value = "";
+		}
+
+		function listenerHandler() {
+			sendRequest({
+				"LastMessage": lastMessage
+			},
+			requestType.listener,
+			callback);
+		}
+
+		function sendRequest(data, commandParam, callback) {
+			var url,
+				param,
+				requestData;
+
+			requestData = h.deepExtend({
+				"ID": h.guid(),
+				"Room": room,
+			}, data);
+
+			param = (serverUrl.indexOf("?") == -1 ? "?" : "&") + "t=" + (commandParam + '');
+
+			url = serverUrl + param;
+
+			h.requestGet(url, requestData, callback);
+		}
+
+		// callback from Listener
+		function callback(e) {
+			var message, i;
+
+			if (e.MessageList.length == 0) {
+				return;
+			}
+
+			for (i = 0; i < e.MessageList.length; i++) {
+				addMessage(e.MessageList[i], messageTemplate);
+			}
+
+			message = e.MessageList[e.MessageList.length - 1];
+
+			if (!!message) {
+				lastMessage = message.ID;
+			}
+		}
+
+		// add message to output container
+		function addMessage(message, template) {
+			var result = h.executeTemplate(message, template);
+
+			output.innerHTML += result;
+		}
+
+		function getCommand(val) {
+			if (!val
+				|| val[0] != "/") return;
+
+			var input = val.trim(),
+				split = input.split(" "),
+				command = split[0].substring(1),
+				value = split[1].substring(0),
+				returnCmd,
+				returnValue;
+
+			commands.forEach(function (e, i, array) {
+				if (e.cmd == command) {
+					returnCmd = e;
+					returnValue = value;
+
+					return true;
+				}
+
+				return false;
+			})
+
+			return {
+				cmd: returnCmd,
+				value: returnValue
+			};
+		}
+
+		//============================================
+		//=========== COMMANDS =======================
+		//============================================
+
+		function nickCommand(val) {
+			if (!val) return;
+
+			username = val.trim().split(" ")[0].trim();
+
+			addMessage({
+				"MessageValue": "username changed to '" + username + "'"
+			}, sysMessageTemplate);
+		}
+	}(window, document));
+});</script></head><body>	<table id="main_table">		<tr>			<td style="height: 95%">				<div id="output">				</div>			</td>		</tr>		<tr>			<td>				<table>					<tr>						<td style="width: 95%;">							<input type="text" id="txtInput" style="width: 95%;" disabled="disabled" />						</td>						<td style="width: 50px;">							<input type="button" id="btnEnter" value="&gt;" disabled="disabled" />						</td>					</tr>				</table>			</td>		</tr>	</table></body></html>

@@ -184,8 +184,19 @@
 
                 var start = blockFind.startLine;
                 var sliceLength = blockFind.endLine - blockFind.startLine + 1;
+				
+				var newArray = [];
+				
+				for( var i=0;i<start;i++) {
+					newArray.push(allLines[i]);
+				}
 
-                allLines.slice(start, sliceLength);
+				for(var i=blockFind.endLine+1;i<allLines.length;i++) {
+					newArray.push(allLines[i]);
+				}
+
+                //allLines = allLines.slice(start, sliceLength);
+				allLines = newArray;
 
                 var insertTextArr = [];
                 result.forEach(function(i) {

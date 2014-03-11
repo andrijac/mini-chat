@@ -64,6 +64,7 @@
 			room = h.readQuery("?room");
 
 			// start listener
+			window.l = listener;
 			listener.start();
 
 			// enable controls
