@@ -5,7 +5,7 @@
     var readline = require('readline'),
         path = require('path'),
         fs = require('fs'),
-        q = require('q'),
+        //q = require('q'),
 
         toArray = function () { return Array.prototype.slice.call(arguments[0]); },
         log =   function () {
@@ -20,7 +20,8 @@
         rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
-        });
+        }),
+        emptyFunction = function() { };
 
     blank();
 
@@ -30,6 +31,11 @@
         });
     }
 
+    if(!Array.prototype.insert) {
+        Array.prototype.insert = function (index, item) {
+            this.splice(index, 0, item);
+        };
+    }
 
     //========== TEST BEING
 
@@ -56,14 +62,17 @@
 
         
 
-        function batch(execFunc, parameters, callback) {
+        function batch(execFunc, parameters, eachCallback, callback) {
 
 	        var index = -1, cb, iterate, results= [];
 
 	        cb = function () {
-                results.push(toArray(arguments));
+                var params = toArray(arguments),
+                    isLastItem = index == parameters.length - 1;
 
-                var isLastItem = index == parameters.length - 1;
+                results.push(params);                
+
+                eachCallback.apply(this, params);
 
                 if(isLastItem) {
                     callback(results);
@@ -85,7 +94,7 @@
         };
 
         function findBlock(text, startTag, stopTag) {
-            var lines = text.split("\n"), i, ii, start, line, result = [];
+            var lines = getLines(text), i, ii, start, line, result = [], startLine, endLine;
 
             start = false;
 
@@ -94,6 +103,7 @@
 
                 if (line === startTag) {
                     start = true;
+                    startLine = i;
                     continue;
                 }
 
@@ -101,37 +111,34 @@
                     continue;
                 }
 
-
                 if (line === stopTag) {
+                    endLine = i;
                     break;
                 }
 
                 result.push(line);
-
             }
 
-            return result;
+            return {                 
+                startLine: startLine,
+                endLine: endLine,
+                result: result
+            };
         }
 
-        
+        function getLines(text) {
+            var lines = text.split("\n");
+            return lines;
+        }
 
         function readAllText (filename, callback) {
 
-            var readCallback =  function (data) {
+            var readCallback =  function (err, data) {
+                if(err) throw err;
                 callback(filename, data);
             };
-
-            var promis;
-
-            //if(q.isPromise(fs.readFile)) {
-            //    promis = fs.readFile;
-            //} else {
-                
-            //}            
-
-            promis = q.denodeify(fs.readFile);
-
-            promis(filename, 'utf8').then(readCallback, log);
+            
+            fs.readFile(filename, 'utf8', readCallback);            
         }
 
         function batchRead(files, callback) {
@@ -142,7 +149,7 @@
                 params.push([file, encoding]);
             });
 
-            batch(fs.readFile, params, callback);
+            batch(fs.readFile, params, emptyFunction, callback);
         }
 
         function parseFileNames (filename, fileLines) {
@@ -158,25 +165,50 @@
             });
         }
 
-        var filename = "C:/Users/acacanovic/Documents/STORE/GIT_ROOT/mini-chat/source/MiniChat/MiniChat/client.html";                   
-
-        
+        var filename = "C:/Users/acacanovic/Documents/STORE/GIT_ROOT/mini-chat/source/MiniChat/MiniChat/client.html";
 
         readAllText(filename, function (filename, e) {
 
+            var allText = e;
 
-            var files = findBlock(e, "<!-- BEGIN dev scripts -->", "<!-- END dev scripts -->");
+            var allLines = getLines(allText);
 
-            var filePathList = parseFileNames(filename, files);            
+            var blockFind = findBlock(allText, "<!-- BEGIN dev scripts -->", "<!-- END dev scripts -->");
+
+            var filePathList = parseFileNames(filename, blockFind.result);            
 
             //filePathList.forEach(function(e){log(e);});
 
-            batchRead(filePathList, function(e) {
+            batchRead(filePathList, function(result) {
                 log(e);
-            });
-        });
 
-        
+                var start = blockFind.startLine;
+                var sliceLength = blockFind.endLine - blockFind.startLine + 1;
+
+                allLines.slice(start, sliceLength);
+
+                var insertTextArr = [];
+                result.forEach(function(i) {
+                    insertTextArr.push(i[1]);
+                });
+
+                insertTextArr.insert(0, "<script>");
+                insertTextArr.push("</script>");
+                var insertText = insertTextArr.join("");
+
+                allLines.insert(start, insertText);
+                //allLines.splice(start, 0, 'andrija');
+                //allLines.insert(start, 'andrija');
+
+                fs.writeFile("C:/temp/test1222.htm", allLines.join(""), function(err) {
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        console.log("The file was saved!");
+                    }
+                }); 
+            });
+        });        
 
     }());
 
