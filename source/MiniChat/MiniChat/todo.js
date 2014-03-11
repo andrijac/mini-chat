@@ -9,6 +9,7 @@ http://www.php.net/manual/en/shmop.examples-basic.php
 http://support.lampcms.com/viewquestion/quest547/Registering-user-crashes-LampCMS-shmop_open-unable-to-attach-or
 
 http://www.ibm.com/developerworks/library/os-php-shared-memory/
+http://stackoverflow.com/questions/5669631/shared-memory-file-in-php
 http://www.php.net/manual/en/function.shmop-open.php
 
 === Checking if a shared memory exists ===
