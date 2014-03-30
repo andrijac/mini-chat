@@ -65,7 +65,8 @@
 
 			// start listener
 			window.l = listener;
-			listener.start();
+			//listener.start();
+			listenerHandler();
 
 			// enable controls
 			input.disabled = false;

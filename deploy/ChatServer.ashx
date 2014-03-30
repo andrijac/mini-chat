@@ -2,8 +2,11 @@
 namespace MiniChat
 {
 	using System.Collections.Generic;
+	using System.IO;
+	using System.Runtime.Serialization;
+	using System.Runtime.Serialization.Json;
+	using System.Text;
 	using System.Web;
-	using System.Web.Script.Serialization;
 
 	/// <summary>
 	/// Summary description for ChatServer
@@ -59,9 +62,7 @@ namespace MiniChat
 
 		private void ListenerHandler(HttpContext context)
 		{
-			JavaScriptSerializer serializer = new JavaScriptSerializer();
-
-			ListenerRequest request = this.ReadRequest<ListenerRequest>(context, serializer);
+			ListenerRequest request = this.ReadRequest<ListenerRequest>(context);
 
 			this.CheckRoom(request.Room);
 
@@ -72,7 +73,7 @@ namespace MiniChat
 					MessageList = this.MessageQueue[request.Room].ToArray()
 				};
 
-				this.WriteResponse(context, serializer, responseAll);
+				this.WriteResponse(context, responseAll);
 
 				return;
 			}
@@ -97,14 +98,12 @@ namespace MiniChat
 				MessageList = messageList.ToArray()
 			};
 
-			this.WriteResponse(context, serializer, response);
+			this.WriteResponse(context, response);
 		}
 
 		private void SendMessageHandler(HttpContext context)
 		{
-			JavaScriptSerializer serializer = new JavaScriptSerializer();
-
-			RequestData request = this.ReadRequest<RequestData>(context, serializer);
+			RequestData request = this.ReadRequest<RequestData>(context);
 
 			Message message = new Message()
 			{
@@ -121,7 +120,7 @@ namespace MiniChat
 			response.MessageList = new Message[1];
 			response.MessageList[0] = message;
 
-			this.WriteResponse(context, serializer, response);
+			this.WriteResponse(context, response);
 		}
 
 		private bool CheckRoom(string roomId)
@@ -135,21 +134,56 @@ namespace MiniChat
 			return true;
 		}
 
-		private T ReadRequest<T>(HttpContext context, JavaScriptSerializer serializer)
+		private T ReadRequest<T>(HttpContext context)
 		{
 			string data = context.Request.Form["data"];
 
-			T request = (T)serializer.Deserialize(data, typeof(T));
+			T request = Deserialize<T>(data);
 
 			return request;
 		}
 
-		private void WriteResponse(HttpContext context, JavaScriptSerializer serializer, ResponseData response)
+		private void WriteResponse(HttpContext context, ResponseData response)
 		{
-			string responseText = serializer.Serialize(response);
+			string responseText = Serialize(response);
 
 			context.Response.ContentType = "text/plain";
 			context.Response.Write(responseText);
+		}
+
+		private static string Serialize<T>(T obj)
+		{
+			string result;
+
+			using (MemoryStream memoryStream = new MemoryStream())
+			{
+				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+
+				serializer.WriteObject(memoryStream, obj);
+				memoryStream.Position = 0;
+
+				using (StreamReader streamReader = new StreamReader(memoryStream))
+				{
+					result = streamReader.ReadToEnd();
+				}
+			}
+
+			return result;
+		}
+
+		private static T Deserialize<T>(string json)
+		{
+			T result;
+
+			using (MemoryStream memoryStream = new MemoryStream(Encoding.Unicode.GetBytes(json)))
+			{
+				DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
+
+				memoryStream.Position = 0;
+				result = (T)serializer.ReadObject(memoryStream);
+			}
+
+			return result;
 		}
 	}
 
@@ -157,22 +191,47 @@ namespace MiniChat
 
 	public class Message
 	{
+		private string id;
+		private string userName;
+		private string messageValue;
+
 		public string ID
 		{
-			get;
-			set;
+			get
+			{
+				return this.id;
+			}
+
+			set
+			{
+				this.id = value;
+			}
 		}
 
 		public string UserName
 		{
-			get;
-			set;
+			get
+			{
+				return this.userName;
+			}
+
+			set
+			{
+				this.userName = value;
+			}
 		}
 
 		public string MessageValue
 		{
-			get;
-			set;
+			get
+			{
+				return this.messageValue;
+			}
+
+			set
+			{
+				this.messageValue = value;
+			}
 		}
 	}
 
