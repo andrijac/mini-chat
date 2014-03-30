@@ -68,10 +68,9 @@ namespace MiniChat
 
 			if (request.LastMessage == null)
 			{
-				ResponseData responseAll = new ResponseData(request)
-				{
-					MessageList = this.MessageQueue[request.Room].ToArray()
-				};
+				ResponseData responseAll = new ResponseData(request);
+
+				responseAll.MessageList = this.MessageQueue[request.Room].ToArray();
 
 				this.WriteResponse(context, responseAll);
 
@@ -93,10 +92,8 @@ namespace MiniChat
 				}
 			}
 
-			ResponseData response = new ResponseData(request)
-			{
-				MessageList = messageList.ToArray()
-			};
+			ResponseData response = new ResponseData(request);
+			response.MessageList = messageList.ToArray();
 
 			this.WriteResponse(context, response);
 		}
@@ -105,12 +102,11 @@ namespace MiniChat
 		{
 			RequestData request = this.ReadRequest<RequestData>(context);
 
-			Message message = new Message()
-			{
-				ID = request.ID,
-				UserName = request.UserName,
-				MessageValue = request.MessageValue
-			};
+			Message message = new Message();
+
+			message.ID = request.ID;
+			message.UserName = request.UserName;
+			message.MessageValue = request.MessageValue;
 
 			this.CheckRoom(request.Room);
 			this.MessageQueue[request.Room].Enqueue(message);
@@ -237,6 +233,9 @@ namespace MiniChat
 
 	public class ResponseData
 	{
+		private Message[] messageList;
+		private string id;
+
 		public ResponseData()
 		{
 		}
@@ -249,14 +248,28 @@ namespace MiniChat
 
 		public string ID
 		{
-			get;
-			set;
+			get
+			{
+				return this.id;
+			}
+
+			set
+			{
+				this.id = value;
+			}
 		}
 
 		public Message[] MessageList
 		{
-			get;
-			set;
+			get
+			{
+				return this.messageList;
+			}
+
+			set
+			{
+				this.messageList = value;
+			}
 		}
 	}
 
@@ -275,16 +288,33 @@ namespace MiniChat
 
 	public class BaseRequest : IIdentifier
 	{
+		private string id;
+		private string room;
+
 		public string ID
 		{
-			get;
-			set;
+			get
+			{
+				return this.id;
+			}
+
+			set
+			{
+				this.id = value;
+			}
 		}
 
 		public string Room
 		{
-			get;
-			set;
+			get
+			{
+				return this.room;
+			}
+
+			set
+			{
+				this.room = value;
+			}
 		}
 	}
 
@@ -299,25 +329,51 @@ namespace MiniChat
 
 	public class ListenerRequest : BaseRequest
 	{
+		private string lastMessage;
+
 		public string LastMessage
 		{
-			get;
-			set;
+			get
+			{
+				return this.lastMessage;
+			}
+
+			set
+			{
+				this.lastMessage = value;
+			}
 		}
 	}
 
 	public class RequestData : BaseRequest
 	{
+		private string userName;
+		private string messageValue;
+
 		public string UserName
 		{
-			get;
-			set;
+			get
+			{
+				return this.userName;
+			}
+
+			set
+			{
+				this.userName = value;
+			}
 		}
 
 		public string MessageValue
 		{
-			get;
-			set;
+			get
+			{
+				return this.messageValue;
+			}
+
+			set
+			{
+				this.messageValue = value;
+			}
 		}
 	}
 

@@ -67,10 +67,9 @@
 
 			if (request.LastMessage == null)
 			{
-				ResponseData responseAll = new ResponseData(request)
-				{
-					MessageList = this.MessageQueue[request.Room].ToArray()
-				};
+				ResponseData responseAll = new ResponseData(request);
+
+				responseAll.MessageList = this.MessageQueue[request.Room].ToArray();
 
 				this.WriteResponse(context, responseAll);
 
@@ -92,10 +91,8 @@
 				}
 			}
 
-			ResponseData response = new ResponseData(request)
-			{
-				MessageList = messageList.ToArray()
-			};
+			ResponseData response = new ResponseData(request);
+			response.MessageList = messageList.ToArray();
 
 			this.WriteResponse(context, response);
 		}
@@ -104,12 +101,11 @@
 		{
 			RequestData request = this.ReadRequest<RequestData>(context);
 
-			Message message = new Message()
-			{
-				ID = request.ID,
-				UserName = request.UserName,
-				MessageValue = request.MessageValue
-			};
+			Message message = new Message();
+
+			message.ID = request.ID;
+			message.UserName = request.UserName;
+			message.MessageValue = request.MessageValue;
 
 			this.CheckRoom(request.Room);
 			this.MessageQueue[request.Room].Enqueue(message);
